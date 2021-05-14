@@ -40,6 +40,26 @@ getAllArticles()
 
 
 
+
+// const getAnArticleById=()=>{
+
+  app.get("/articles/:id",(req,res)=>{
+   const id = req.params.id
+
+   const article = articles.find(elm => elm.id === Number(id))
+
+  res.status(200);
+  res.json(article);
+
+  });
+
+// }
+// getAnArticleById()
+
+
+
+
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
   });
