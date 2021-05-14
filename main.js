@@ -27,13 +27,17 @@ const articles = [
   },
   ];
 
-const getAllArticles=()=>{
-  app.get("/articles",(req,set)=>{
+
+const getAllArticles= () =>{
+  
+  app.get("/articles", (req,res)=>{
     res.status(200);
     res.json(articles);
-  })
+  });
   
 }
+getAllArticles()
+
 
 
 app.listen(port, () => {
