@@ -1,0 +1,24 @@
+{
+  "name": "meraki_academy_project_3",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node main.js",
+    "div": "nodemon main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AsmaRalenazi/MERAKI_Academy_Project_3.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AsmaRalenazi/MERAKI_Academy_Project_3/issues"
+  },
+  "homepage": "https://github.com/AsmaRalenazi/MERAKI_Academy_Project_3#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
