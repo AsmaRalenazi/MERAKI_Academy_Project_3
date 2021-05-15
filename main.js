@@ -132,8 +132,24 @@ if(found){
 
 })
 
-//------------------------------------
+
 //deleteArticlesByAuthor
+app.delete("/articles",(req,res)=>{
+const deleteAuthor =req.params.author
+let i;
+const found=articles.filter(elem => elem.author === deleteAuthor)
+
+if (found){
+  
+  let message={
+    "success":true,
+    "message":`Success delete all the articles for the author => ${req.body.author}`
+  }
+  res.json(message)
+}
+});
+
+
 
 
 
