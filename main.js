@@ -112,16 +112,14 @@ return elem.id === Number(id)
 
 })
 
-//------------------------------------
+
 //deleteArticleById
 
 app.delete("/articles/:id",(req,res) => {
   const id =req.params.id
-
+let i ;
   let found = articles.find(elem => elem.id === Number(id))
 
- 
- 
 
 if(found){
   articles.splice(i,1)
@@ -134,7 +132,7 @@ if(found){
 
 })
 
-
+//------------------------------------
 //deleteArticlesByAuthor
 
 
