@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const port = 5000;
 app.use(express.json());
+const { uuid } = require('uuidv4');
 
 const articles = [
   {
@@ -26,7 +27,6 @@ const articles = [
   author: 'Jouza',
   },
   ];
-
 
 
   //getAllArticles
@@ -73,25 +73,70 @@ app.get("/articles/search_1", (req,res)=>{
 
 //createNewArticle
 app.post("/articles",(req,res)=>{
-  const newUser=id.title.description.author
-  const newArticles =req.body.newUser
-  articles.push(newArticles);
+  
+  let article = {
+    id: uuid(),
+    title: req.body.title,
+    description: req.body.description,
+    author: req.body.author,
+  };
 
+articles.push(article)
   res.status(201);
-  res.json(newArticles);
+  res.json(article);
 })
 
 
 
 
+
 //updateAnArticleById
-app.put("/articles/:id"),(req,res)=>{
+app.put("/articles/:id",(req,res)=>{
+ const id = req.params.id
 
-  const updateArticle=req.body.id
-  articles.push(updateArticle);
-  res.json(updateArticle);
+ let i;
+  const found=articles.find ((elem,index) => {
+i=index;
+return elem.id === Number(id)
+  })
+  if (found){
+    articles[i].title=req.body.title
+    articles[i].description=req.body.description
+    articles[i].author=req.body.author
+    res.status(200)
+    res.json(articles);
+  }else{
+    res.status(404)
+    res.json("not found")
+  }
 
+})
+
+//------------------------------------
+//deleteArticleById
+
+app.delete("/articles/:id",(req,res) => {
+  const id =req.params.id
+
+  let found = articles.find(elem => elem.id === Number(id))
+
+ 
+ 
+
+if(found){
+  articles.splice(i,1)
+  let message ={
+    "success":true,
+    "message":`Success Delete article with id =>${id}`,
+  }
+  res.json(message)
 }
+
+})
+
+
+//deleteArticlesByAuthor
+
 
 
 app.listen(port, () => {
