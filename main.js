@@ -4,7 +4,7 @@ const port = 5000;
 app.use(express.json());
 const { uuid } = require('uuidv4');
 
-const articles = [
+let articles = [
   {
   id: 1,
   title: 'How I learn coding?',
@@ -135,12 +135,12 @@ if(found){
 
 //deleteArticlesByAuthor
 app.delete("/articles",(req,res)=>{
-const deleteAuthor =req.params.author
-let i;
-const found=articles.filter(elem => elem.author === deleteAuthor)
+const deleteAuthor =req.body.author
+
+const found=articles.filter(elem => elem.author !== deleteAuthor)
 
 if (found){
-  
+  articles=found
   let message={
     "success":true,
     "message":`Success delete all the articles for the author => ${req.body.author}`
