@@ -1,29 +1,32 @@
 const express = require("express");
 const app = express();
+const db=require("./db")
+const {users,articles}=require("./schema")
 const port = 5000;
 app.use(express.json());
 const { uuid } = require("uuidv4");
 
-let articles = [
-  {
-    id: 1,
-    title: "How I learn coding?",
-    description: "Lorem, Quam, mollitia.",
-    author: "Jouza",
-  },
-  {
-    id: 2,
-    title: "Coding Best Practices",
-    description: "Lorem, ipsum dolor sit, Quam, mollitia.",
-    author: "Besslan",
-  },
-  {
-    id: 3,
-    title: "Debugging",
-    description: "Lorem, Quam, mollitia.",
-    author: "Jouza",
-  },
-];
+// let articles = [
+//   {
+//     id: 1,
+//     title: "How I learn coding?",
+//     description: "Lorem, Quam, mollitia.",
+//     author: "Jouza",
+//   },
+//   {
+//     id: 2,
+//     title: "Coding Best Practices",
+//     description: "Lorem, ipsum dolor sit, Quam, mollitia.",
+//     author: "Besslan",
+//   },
+//   {
+//     id: 3,
+//     title: "Debugging",
+//     description: "Lorem, Quam, mollitia.",
+//     author: "Jouza",
+//   },
+// ];
+
 
 //getAllArticles
 app.get("/articles", (req, res) => {
@@ -123,6 +126,23 @@ app.delete("/articles", (req, res) => {
     res.json(message);
   }
 });
+
+
+
+//createNewAuthor
+app.post("/users",(req,res) =>{
+let {firstName,lastName,age,country,email,password}=req.body
+const user=new users ({
+ firstName,lastName,age,country,email,password
+})
+user.save().then((result)=>{
+  res.json(result)
+}).catch((err)=>{
+  res.status(201);
+})
+   
+})
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
