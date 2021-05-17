@@ -4,7 +4,7 @@ const db=require("./db")
 const {users,articles}=require("./schema")
 const port = 5000;
 app.use(express.json());
-const { uuid } = require("uuidv4");
+// const { uuid } = require("uuidv4");
 
 // let articles = [
 //   {
@@ -31,66 +31,83 @@ const { uuid } = require("uuidv4");
 //getAllArticles
 app.get("/articles", (req, res) => {
   res.status(200);
-  res.json(articles);
-});
+  articles
+  .find()
+  .then((result)=>{
+    res.json(result)
+  })
+  .catch((err)=>{
+    res.send(err);
+  })
+})
 
 //getArticlesByAuthor
 app.get("/articles/search_1", (req, res) => {
-  const search_1 = req.query.author;
+  let author = req.query.author;
+  articles.find({author}).then((result)=>{
+    res.json(result)
+  })
+  .catch((err)=>{
+    res.send(err)
+  })
 
-  const found = articles.filter((elm) => elm.author === search_1);
-
-  if (found) {
-    res.status(200);
-    res.json(found);
-  } else {
-    res.status(404);
-    res.json("User not found");
-  }
+  res.status(200);
 });
+  
 
 //getAnArticleById
 app.get("/articles/:id", (req, res) => {
-  const id = req.params.id;
-
-  const article = articles.find((elm) => elm.id === Number(id));
-
+  let _id = req.body.id;
+  articles.find({_id}).populate("firstName")
+  .exec()
+  .then((result)=>{
+    res.json(result)
+  })
+  .catch((err)=>{
+    res.send(err)
+  })
   res.status(200);
-  res.json(article);
 });
 
 //createNewArticle
-app.post("/articles", (req, res) => {
-  let article = {
-    id: uuid(),
-    title: req.body.title,
-    description: req.body.description,
-    author: req.body.author,
-  };
-
-  articles.push(article);
-  res.status(201);
-  res.json(article);
+app.post("/articles",async (req, res) => {
+const {title,description,author}= req.body
+let user1;
+await users.findOne({author })
+    .then((result) => {
+      author = result;
+      console.log(author);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  const user1 = new users({
+    title,
+description,
+author:author.firstName
 });
+})
 
 //updateAnArticleById
 app.put("/articles/:id", (req, res) => {
-  const id = req.params.id;
-
+  const id = req.body.id;
   let i;
-  const found = articles.find((elem, index) => {
-    i = index;
-    return elem.id === Number(id);
-  });
+  const found = articles.find({id}).then(
+    (result)=>{
+      res.json(result)
+  })
+  .catch((err)=>{
+    res.send(err)
+  })
+  // const {title,description,author}=req.body
   if (found) {
-    articles[i].title = req.body.title;
-    articles[i].description = req.body.description;
-    articles[i].author = req.body.author;
+    articles.title = req.body.title;
+    articles.description = req.body.description;
+    articles.author = req.body.author;
+    // set the response status code to 200 (ok)
     res.status(200);
-    res.json(articles);
-  } else {
-    res.status(404);
-    res.json("not found");
+    // sends back a response articles after update
+
   }
 });
 
@@ -129,12 +146,13 @@ app.delete("/articles", (req, res) => {
 
 
 
+//2.mongoDB
 //createNewAuthor
 app.post("/users",(req,res) =>{
 let {firstName,lastName,age,country,email,password}=req.body
-const user=new users ({
- firstName,lastName,age,country,email,password
-})
+const user=new users (
+ req.body
+)
 user.save().then((result)=>{
   res.json(result)
 }).catch((err)=>{

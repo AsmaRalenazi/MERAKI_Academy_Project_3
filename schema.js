@@ -8,7 +8,6 @@ const usersSchema = new mongoose.Schema({
     country: {type:String},
     email:{type:String},
     password: {type:String}
-
 })
 
 const articlesSchema= new mongoose.Schema({
