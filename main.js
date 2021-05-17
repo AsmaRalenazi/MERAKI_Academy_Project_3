@@ -123,18 +123,15 @@ app.delete("/articles/id", (req, res) => {
 
 //deleteArticlesByAuthor
 app.delete("/articles", (req, res) => {
-  const deleteAuthor = req.body.author;
-
-  const found = articles.deleteOne((elem) => elem.author !== deleteAuthor);
-
-  if (found) {
-    articles = found;
-    let message = {
-      success: true,
-      message: `Success delete all the articles for the author => ${req.body.author}`,
-    };
-    res.json(message);
-  }
+  const {title, description,author} = req.body;
+  articles
+    .deleteOne({ author }, {title,description })
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((err) => {
+      res.send(err);
+    });
 });
 
 
