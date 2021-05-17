@@ -43,8 +43,8 @@ app.get("/articles", (req, res) => {
 
 //getArticlesByAuthor
 app.get("/articles/search_1", (req, res) => {
-  let author = req.query.author;
-  articles.find({author}).then((result)=>{
+  let author_id = req.query.author;
+  articles.find({author:author_id}).then((result)=>{
     res.json(result)
   })
   .catch((err)=>{
@@ -58,7 +58,7 @@ app.get("/articles/search_1", (req, res) => {
 //getAnArticleById
 app.get("/articles/:id", (req, res) => {
   let _id = req.body.id;
-  articles.find({_id}).populate("firstName")
+  articles.find({_id}).populate("author_id","author")
   .exec()
   .then((result)=>{
     res.json(result)
@@ -70,45 +70,40 @@ app.get("/articles/:id", (req, res) => {
 });
 
 //createNewArticle
-app.post("/articles",async (req, res) => {
+app.post("/articles", (req, res) => {
+
 const {title,description,author}= req.body
-let user1;
-await users.findOne({author })
-    .then((result) => {
-      author = result;
-      console.log(author);
+
+  const newArticle = new articles({
+    title,
+    description,
+    author
+});
+
+newArticle
+.save()
+    .then((result1) => {
+      res.json(result1);
     })
     .catch((err) => {
-      console.log(err);
+      res.json(err);
     });
-  const user1 = new users({
-    title,
-description,
-author:author.firstName
-});
 })
 
 //updateAnArticleById
-app.put("/articles/:id", (req, res) => {
-  const id = req.body.id;
-  let i;
-  const found = articles.find({id}).then(
-    (result)=>{
-      res.json(result)
-  })
-  .catch((err)=>{
-    res.send(err)
-  })
-  // const {title,description,author}=req.body
-  if (found) {
-    articles.title = req.body.title;
-    articles.description = req.body.description;
-    articles.author = req.body.author;
-    // set the response status code to 200 (ok)
-    res.status(200);
-    // sends back a response articles after update
+app.put("/articles/id", (req, res) => {
+  const {_id,title, description} = req.body;
+  const found = articles.findOneAndUpdate({_id},
+  { title, description},{new:true}
+  )
 
-  }
+  .then((result) => {
+    res.json(result);
+  })
+  .catch((err) => {
+    res.send(err);
+  });
+  
 });
 
 //deleteArticleById
@@ -116,7 +111,7 @@ app.put("/articles/:id", (req, res) => {
 app.delete("/articles/:id", (req, res) => {
   const id = req.params.id;
   let i;
-  let found = articles.find((elem) => elem.id === Number(id));
+  let found = articles.deleteOne((elem) => elem._id === Number(_id));
 
   if (found) {
     articles.splice(i, 1);
@@ -132,7 +127,7 @@ app.delete("/articles/:id", (req, res) => {
 app.delete("/articles", (req, res) => {
   const deleteAuthor = req.body.author;
 
-  const found = articles.filter((elem) => elem.author !== deleteAuthor);
+  const found = articles.deleteOne((elem) => elem.author !== deleteAuthor);
 
   if (found) {
     articles = found;
