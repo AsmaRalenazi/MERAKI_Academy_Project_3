@@ -108,20 +108,18 @@ app.put("/articles/id", (req, res) => {
 
 //deleteArticleById
 
-app.delete("/articles/:id", (req, res) => {
-  const id = req.params.id;
-  let i;
-  let found = articles.deleteOne((elem) => elem._id === Number(_id));
-
-  if (found) {
-    articles.splice(i, 1);
-    let message = {
-      success: true,
-      message: `Success Delete article with id =>${id}`,
-    };
-    res.json(message);
-  }
+app.delete("/articles/id", (req, res) => {
+  const {_id,title, description} = req.body;
+  articles
+    .deleteOne({ _id }, {title,description })
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((err) => {
+      res.send(err);
+    });
 });
+
 
 //deleteArticlesByAuthor
 app.delete("/articles", (req, res) => {
