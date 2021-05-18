@@ -125,9 +125,41 @@ user.save().then((result)=>{
   res.json(result)
 }).catch((err)=>{
   res.status(201);
+}) 
 })
-   
-})
+
+
+//login level1
+app.post("/login",(req,res)=>{
+  let{email,password}=req.body
+  users.findOne({email,password})
+    .then((result)=>{
+      console.log(result);
+      if(result){
+        res.status(200)
+        res.json("Valid login credentials")
+      }else {
+        res.status(401)
+        res.send("Invalid login credentials") 
+    }
+  }) 
+  })
+
+  
+
+
+
+
+//createNewComment
+app.post("/articles/:id/comments",)
+
+
+
+
+
+
+
+
 
 
 app.listen(port, () => {
