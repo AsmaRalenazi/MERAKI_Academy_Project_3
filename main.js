@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const db=require("./db")
-const {users,articles}=require("./schema")
+const {users,articles,comments}=require("./schema")
 const port = 5000;
 app.use(express.json());
 
@@ -145,19 +145,24 @@ app.post("/login",(req,res)=>{
   }) 
   })
 
-  
-
-
-
 
 //createNewComment
-app.post("/articles/:id/comments",)
+app.post("/articles/:id/comments",(req,res)=>{
+let {comment,commenter}=req.body
+const id=req.params.id
+const niceComment =new comments({
+  comment,commenter
+})
 
-
-
-
-
-
+niceComment
+.save().then(async(result)=>{
+await articles.findOneAndUpdate({_id:id},
+{$push:{commentss:result._id}})
+  res.json(result)
+}).catch((err)=>{
+  res.status(201);
+})
+})
 
 
 
