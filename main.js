@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const db = require("./db");
 const { users, articles, comments } = require("./schema");
-const bcrypt=require("bcrypt")
-const jwt=require("jsonwebtoken")
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const secret = process.env.SECRET;
 
@@ -133,52 +133,58 @@ app.post("/users", (req, res) => {
 //login level3
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  await users.findOne({ email }).then( async (result) => {
-    if (!result) {
-      return res.send({ massage: "The email doesn't exist", status: 404 });
-    }
-    const payload = { userId: result._id, country: result.country,
-      role:{role:'admin',permissions:['MANAGE_USERS', 'CREATE_COMMENTS'] } } 
-    const options = {
-      expiresIn: "60m",
-    };
-
-    console.log(result);
-    const token = await jwt.sign(payload, secret, options);
-    console.log(result.password);  //should be a hashed password
-    await bcrypt.compare(password, result.password, (err, result) => {
-      if (result) {
-        res.json(token);
-      } else {
-        return res.send({
-          massage: "The password you've entered is incorrect",
-          status: 403,
-        });
+  await users
+    .findOne({ email })
+    .then(async (result) => {
+      if (!result) {
+        return res.send({ massage: "The email doesn't exist", status: 404 });
       }
+      const payload = {
+        userId: result._id,
+        country: result.country,
+        role: {
+          role: "admin",
+          permissions: ["MANAGE_USERS", "CREATE_COMMENTS"],
+        },
+      };
+      const options = {
+        expiresIn: "60m",
+      };
+
+      console.log(result);
+      const token = await jwt.sign(payload, secret, options);
+      console.log(result.password); //should be a hashed password
+      await bcrypt.compare(password, result.password, (err, result) => {
+        if (result) {
+          res.json(token);
+        } else {
+          return res.send({
+            massage: "The password you've entered is incorrect",
+            status: 403,
+          });
+        }
+      });
+    })
+    .catch((err) => {
+      res.send(err);
     });
-  }).catch((err) => {
-    res.send(err);
-  });
-})
+});
 
 const authentication = (req, res, next) => {
-  if(!req.headers.authorization){
-    
-      return res.send({ massage: "the token invalid expired", status: "403" });
-
-  } 
+  if (!req.headers.authorization) {
+    return res.send({ massage: "the token invalid expired", status: "403" });
+  }
   const token = req.headers.authorization.split(" ")[1];
   jwt.verify(token, secret, (err, result) => {
     if (result) {
-      req.token=result
-            next();
-          }
-})
-}
+      req.token = result;
+      next();
+    }
+  });
+};
 
 //createNewComment
-app.post("/articles/:id/comments",authentication, (req, res) => {
-  
+app.post("/articles/:id/comments", authentication, (req, res) => {
   let { comment, commenter } = req.body;
   const id = req.params.id;
   const niceComment = new comments({
@@ -198,19 +204,23 @@ app.post("/articles/:id/comments",authentication, (req, res) => {
     .catch((err) => {
       res.status(201);
     });
-//     const authorization =(string)=>{
-//       // if (result.permissions===string) {
-      
-//       //   next();
-//       // }else{
-//         res.json( { message: 'forbidden ', status: 403 })
-//       }
-//       authentication()
-//     }
-//     authorization("CREATE_COMMENT")
-// });
-  })
 
+  //try solve role massage
+  //createNewComment [Level 3]
+  //Use it after the authentication middleware,
+  // invoke the closure function so it returns the middleware functionauthorization("CREATE_COMMENT")
+  const authorization = () => {
+    for (let i = 0; i < permissions.length; i++) {
+      if (permissions[i] === "CREATE_COMMENT") {
+        next();
+        authentication();
+      } else {
+        res.json({ message: "forbidden ", status: 403 });
+      }
+    }
+    authorization("CREATE_COMMENT");
+  };
+});
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

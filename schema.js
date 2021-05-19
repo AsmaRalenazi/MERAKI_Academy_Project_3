@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const bcrypt=require("bcrypt")
+const bcrypt = require("bcrypt");
 const usersSchema = new mongoose.Schema({
   firstName: { type: String },
   lastName: { type: String },
@@ -7,20 +7,18 @@ const usersSchema = new mongoose.Schema({
   country: { type: String },
   email: { type: String },
   password: { type: String },
-  role:{type:mongoose.Schema.ObjectId,ref:"roles"}
+  role: { type: mongoose.Schema.ObjectId, ref: "roles" },
 });
-usersSchema.pre("save",async function(){
-  this.email=this.email.toLowerCase()
-  const salt=10;
- this.password = await bcrypt.hash(this.password,salt)
- 
- })
+usersSchema.pre("save", async function () {
+  this.email = this.email.toLowerCase();
+  const salt = 10;
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
-const rolesSchema=new mongoose.Schema({
-  role:{type:String},
-  permissions:[{type:String}]
-})
-
+const rolesSchema = new mongoose.Schema({
+  role: { type: String },
+  permissions: [{ type: String }],
+});
 
 const articlesSchema = new mongoose.Schema({
   title: { type: String },
@@ -41,4 +39,3 @@ module.exports.users = users;
 module.exports.articles = articles;
 module.exports.comments = comments;
 module.exports.roles = roles;
-
