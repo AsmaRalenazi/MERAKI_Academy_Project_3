@@ -5,6 +5,8 @@ const { users, articles, comments } = require("./schema");
 const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken")
 require("dotenv").config();
+const secret = process.env.SECRET;
+
 const port = 5000;
 app.use(express.json());
 
@@ -129,22 +131,52 @@ app.post("/users", (req, res) => {
 });
 
 //login level1
-app.post("/login", (req, res) => {
-  let { email, password } = req.body;
-  users.findOne({ email, password }).then((result) => {
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  await users.findOne({ email }).then( async (result) => {
+    if (!result) {
+      return res.send({ massage: "The email doesn't exist", status: 404 });
+    }
+    const payload = { userId: result._id, country: result.country,
+      role:{role:'admin',permissions:['MANAGE_USERS', 'CREATE_COMMENTS'] } } 
+    const options = {
+      expiresIn: "60m",
+    };
+
     console.log(result);
-    if (result) {
-      res.status(200);
-      res.json("Valid login credentials");
-    } else {
-      res.status(401);
-      res.send("Invalid login credentials");
+    const token = await jwt.sign(payload, secret, options);
+    console.log(result.password);  //should be a hashed password
+    await bcrypt.compare(password, result.password, (err, result) => {
+      if (result) {
+        res.json(token);
+      } else {
+        return res.send({
+          massage: "The password you've entered is incorrect",
+          status: 403,
+        });
+      }
+    });
+  }).catch((err) => {
+    res.send(err);
+  });
+})
+
+const authentication = (req, res, next) => {
+  const token = req.headers.authorization.split(" ")[1];
+  jwt.verify(token, secret, (err, result) => {
+    if (token) {
+
+      next();
+    }
+    if (err) {
+      res.send({ massage: "the token invalid expired", status: "403" });
     }
   });
-});
+};
 
 //createNewComment
-app.post("/articles/:id/comments", (req, res) => {
+app.post("/articles/:id/comments",authentication, (req, res) => {
+  
   let { comment, commenter } = req.body;
   const id = req.params.id;
   const niceComment = new comments({
@@ -164,7 +196,12 @@ app.post("/articles/:id/comments", (req, res) => {
     .catch((err) => {
       res.status(201);
     });
+    const authorization=(string)=>{
+      authentication()
+    }
 });
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

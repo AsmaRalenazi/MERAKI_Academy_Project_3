@@ -1,7 +1,7 @@
 {
   "name": "meraki_academy_project_3",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "node main.js",
     "dev": "nodemon main.js",
