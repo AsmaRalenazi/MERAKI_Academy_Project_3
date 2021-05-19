@@ -130,7 +130,7 @@ app.post("/users", (req, res) => {
     });
 });
 
-//login level1
+//login level3
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   await users.findOne({ email }).then( async (result) => {
@@ -162,17 +162,19 @@ app.post("/login", async (req, res) => {
 })
 
 const authentication = (req, res, next) => {
+  if(!req.headers.authorization){
+    
+      return res.send({ massage: "the token invalid expired", status: "403" });
+
+  } 
   const token = req.headers.authorization.split(" ")[1];
   jwt.verify(token, secret, (err, result) => {
-    if (token) {
-
-      next();
-    }
-    if (err) {
-      res.send({ massage: "the token invalid expired", status: "403" });
-    }
-  });
-};
+    if (result) {
+      req.token=result
+            next();
+          }
+})
+}
 
 //createNewComment
 app.post("/articles/:id/comments",authentication, (req, res) => {
@@ -196,11 +198,18 @@ app.post("/articles/:id/comments",authentication, (req, res) => {
     .catch((err) => {
       res.status(201);
     });
-    const authorization=(string)=>{
-      authentication()
-    }
-});
-
+//     const authorization =(string)=>{
+//       // if (result.permissions===string) {
+      
+//       //   next();
+//       // }else{
+//         res.json( { message: 'forbidden ', status: 403 })
+//       }
+//       authentication()
+//     }
+//     authorization("CREATE_COMMENT")
+// });
+  })
 
 
 app.listen(port, () => {
