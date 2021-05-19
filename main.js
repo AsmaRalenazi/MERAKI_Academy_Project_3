@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const db = require("./db");
 const { users, articles, comments } = require("./schema");
+const bcrypt=require("bcrypt")
+const jwt=require("jsonwebtoken")
+require("dotenv").config();
 const port = 5000;
 app.use(express.json());
 
