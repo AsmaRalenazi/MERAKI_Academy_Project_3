@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const db = require("./db");
-const { users, articles, comments } = require("./schema");
+const { users, articles, comments,Roles } = require("./schema");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -118,7 +118,7 @@ app.delete("/articles", (req, res) => {
 //2.mongoDB
 //createNewAuthor
 app.post("/users", (req, res) => {
-  let { firstName, lastName, age, country, email, password } = req.body;
+  let { firstName, lastName, age, country, email, password,role } = req.body;
   const user = new users(req.body);
   user
     .save()
@@ -170,12 +170,16 @@ app.post("/login", async (req, res) => {
     });
 });
 
+
 const authentication = (req, res, next) => {
   if (!req.headers.authorization) {
     return res.send({ massage: "the token invalid expired", status: "403" });
   }
   const token = req.headers.authorization.split(" ")[1];
   jwt.verify(token, secret, (err, result) => {
+    if (err) {
+      res.send(err);
+    }
     if (result) {
       req.token = result;
       next();
@@ -183,8 +187,23 @@ const authentication = (req, res, next) => {
   });
 };
 
+
+const authorization = (str) => {
+  return (fun = (req, res, next) => {
+        const permissions = req.token.role.permissions;
+        for (let i = 0; i < permissions.length; i++) {
+          if (permissions[i] === str) {
+           return next();
+          } 
+        }
+        return  res.json({ message: "forbidden ", status: 403 });
+  });
+};
+
 //createNewComment
-app.post("/articles/:id/comments", authentication, (req, res) => {
+app.post("/articles/:id/comments",authentication,
+authorization("CREATE_COMMENTS"),
+(req, res) => {
   let { comment, commenter } = req.body;
   const id = req.params.id;
   const niceComment = new comments({
@@ -204,22 +223,24 @@ app.post("/articles/:id/comments", authentication, (req, res) => {
     .catch((err) => {
       res.status(201);
     });
+  })
 
-  //try solve role massage
-  //createNewComment [Level 3]
-  //Use it after the authentication middleware,
-  // invoke the closure function so it returns the middleware functionauthorization("CREATE_COMMENT")
-  const authorization = () => {
-    for (let i = 0; i < permissions.length; i++) {
-      if (permissions[i] === "CREATE_COMMENT") {
-        next();
-        authentication();
-      } else {
-        res.json({ message: "forbidden ", status: 403 });
-      }
-    }
-    authorization("CREATE_COMMENT");
-  };
+app.post("/create/role", (req, res) => {
+  //id = _id users
+  const { role, permissions } = req.body;
+  const newRole = new Roles({
+    role,
+    permissions,
+  });
+  newRole
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.json(result);
+    })
+    .catch((err) => {
+      res.send(err);
+    });
 });
 
 app.listen(port, () => {

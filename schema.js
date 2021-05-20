@@ -7,8 +7,9 @@ const usersSchema = new mongoose.Schema({
   country: { type: String },
   email: { type: String },
   password: { type: String },
-  role: { type: mongoose.Schema.ObjectId, ref: "roles" },
-});
+  role: { type: mongoose.Schema.ObjectId, ref: "Roles" },
+}); 
+//before saving the user information make this
 usersSchema.pre("save", async function () {
   this.email = this.email.toLowerCase();
   const salt = 10;
@@ -34,8 +35,8 @@ const commentsSchema = new mongoose.Schema({
 const users = mongoose.model("users", usersSchema);
 const articles = mongoose.model("articles", articlesSchema);
 const comments = mongoose.model("comment", commentsSchema);
-const roles = mongoose.model("roles", rolesSchema);
+const Roles = mongoose.model("Roles", rolesSchema);
 module.exports.users = users;
 module.exports.articles = articles;
 module.exports.comments = comments;
-module.exports.roles = roles;
+module.exports.Roles = Roles;
