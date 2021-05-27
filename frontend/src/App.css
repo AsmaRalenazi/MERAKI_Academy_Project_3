@@ -1,0 +1,26 @@
+.Register {
+    border: 3px solid blue;
+    margin: 7px;
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+}
+   
+
+.Navigation{
+    border: 3px solid red;
+    margin: 7px;
+}
+.App{
+    border: 3px solid green;
+    margin: 7px;
+    display: flex;
+    flex-direction: column;
+}
+.login{
+    border: 3px solid purple;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+
+}
