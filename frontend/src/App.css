@@ -30,3 +30,12 @@
 .massageError{
     background-color: rgb(248, 215, 218);
 }
+
+.Dashboard{
+    border: 3px solid blue
+}
+.button{
+    background-color: rgb(72, 72, 187);
+    color:white;
+    cursor: pointer;
+}

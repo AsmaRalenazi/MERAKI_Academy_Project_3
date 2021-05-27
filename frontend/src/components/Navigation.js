@@ -8,6 +8,8 @@ export default function Navigation () {
       
       <Link to="/login"> login </Link>
       <Link to="/register"> Register </Link>
+      <Link to="/Dashboard" >Dashboard</Link>
+      <Link to="/NewArticle">NewArticle</Link> 
  
     </div>
   );

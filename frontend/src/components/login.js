@@ -1,7 +1,8 @@
 import React,{useState} from "react";
 import axios from "axios";
+import Dashboard from "./Dashboard";
 
-export default function Login(){
+export default function Login(token){
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     
@@ -11,6 +12,8 @@ axios.post("http://localhost:5000/login",{
     password:password
 }).then((res)=>{
     console.log(res.data);
+  
+
 }).catch((err)=>{ 
   console.log(err);
   });
@@ -25,6 +28,7 @@ onChange={(e)=>setEmail(e.target.value)} />
 <input type="Password" placeholder="password here"
 onChange={(e)=>setPassword(e.target.value)} />
 <button onClick={logUser}>login</button>
+<Dashboard/>
 </div>
 </>
 )
