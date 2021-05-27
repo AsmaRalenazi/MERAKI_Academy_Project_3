@@ -9,7 +9,8 @@ const [age,setAge]=useState("")
 const [email,setEmail]=useState("")
 const [country,setCountry]=useState("")
 const [password,setPassword]=useState("")
-
+const [successfully,setSuccessfully]=useState(false)
+const [unsuccessfully,setUnsuccessfully]=useState(false)
 
 
 
@@ -25,11 +26,15 @@ axios.post("http://localhost:5000/users",{
 })
 .then((res)=>{
   console.log(res.data);
-  if(res.status(201))
-  {console.log(" The user has been created successfully")}
+  if(!res.data.errors){
+    setSuccessfully(true)
+    setUnsuccessfully(false)
+  }else{
+    setSuccessfully(false)
+    setUnsuccessfully(true)
+  }
 })
 .catch((err)=>{
- 
 console.log(err);
 });
 };
@@ -49,6 +54,8 @@ console.log(err);
         <input type="password" placeholder="password here" onChange={(e) => {
         setPassword(e.target.value)}}/>
         <button onClick={newUser}>Register</button>
+        {successfully?(<div className="massageSuccessful"> The user has been created successfully</div>):null}
+        {unsuccessfully?(<div className="massageError">Error happened while creating a new article, please try again</div>):null}
       </div>
 
     )

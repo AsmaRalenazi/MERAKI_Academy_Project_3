@@ -24,3 +24,9 @@
     flex-direction: column;
 
 }
+.massageSuccessful{
+    background-color: rgb(209, 231, 221);
+}
+.massageError{
+    background-color: rgb(248, 215, 218);
+}
