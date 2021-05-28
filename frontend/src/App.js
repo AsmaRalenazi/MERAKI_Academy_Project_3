@@ -1,23 +1,23 @@
-import React from 'react';
+import {React,useState} from 'react';
 import './App.css';
 import Register from "./components/Register"
 import Navigation from "./components/Navigation"
-import { BrowserRouter as Router,Route } from "react-router-dom";
+import { BrowserRouter as Router,Route ,Switch} from "react-router-dom";
 import Login from "./components/login"
 import Dashboard from "./components/Dashboard"
-import NewArticle from "./components/NewArticle"
+import CreateNewArticle from "./components/CreateNewArticle"
 
-
-export default function App(token) {
+export default function App() {
+  const [token, setToken] = useState("")
   return (
     <div className="App">
-      <Navigation/>
-      
-      <Route exact path="/login" component={Login} />
+      <Route  render={()=><Navigation setToken={token}/>  }/>
+      <Switch>
+      <Route exact path="/login" render={()=><Login setToken={setToken}/>  }/>
       <Route exact path="/register" component={Register} />
       <Route exact path="/Dashboard" component={Dashboard} />
-      <Route exact path="/NewArticle" component={NewArticle} />
-      
+      <Route exact path="/CreateNewArticle" component={CreateNewArticle} />
+      </Switch>
     </div>
   );
 }

@@ -1,10 +1,11 @@
-import React from 'react'
-export default function newArticle(){
-
+import {React,useState} from 'react'
+import { BrowserRouter as Router,Route ,Switch} from "react-router-dom";
+export default function CreateNewArticle(){
+const [title,setTitle]=useState("");
     return (
         <>
         <input type="text" placeholder="article title here"onChange={(e) => {
-        setFirstName(e.target.value)}}/>
+        setTitle(e.target.value)}}/>
         <input type="textarea" placeholder="article description here"/>
         <button>Create New Article</button>
         </>
