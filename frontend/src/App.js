@@ -11,12 +11,12 @@ export default function App() {
   const [token, setToken] = useState("")
   return (
     <div className="App">
-      <Route  render={()=><Navigation setToken={token}/>  }/>
+      <Route  render={()=><Navigation token={token}/>  }/>
       <Switch>
       <Route exact path="/login" render={()=><Login setToken={setToken}/>  }/>
       <Route exact path="/register" component={Register} />
       <Route exact path="/Dashboard" component={Dashboard} />
-      <Route exact path="/CreateNewArticle" component={CreateNewArticle} />
+      <Route exact path="/CreateNewArticle" render={()=><CreateNewArticle token={token}/>}/>
       </Switch>
     </div>
   );

@@ -2,6 +2,7 @@ import React,{useState} from "react";
 import axios from "axios";
 import Dashboard from "./Dashboard";
 import { useHistory } from "react-router";
+import CreateNewArticle from "./CreateNewArticle";
 
 export default function Login({setToken}){
     const [email, setEmail] = useState("")
