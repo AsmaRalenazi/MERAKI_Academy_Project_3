@@ -39,3 +39,10 @@
     color:white;
     cursor: pointer;
 }
+.newArticle{
+    border: 3px solid rgb(141, 67, 49);
+    margin: 7px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+}

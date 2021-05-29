@@ -35,6 +35,7 @@ headers:{
 }
     return (
         <>
+        <div className="newArticle">
         <p>New Article</p>
         <input type="text" placeholder="article title here"onChange={(e) => {
         setTitle(e.target.value)}}/>
@@ -44,7 +45,7 @@ headers:{
         <button onClick={newArticle}> Create New Article </button>
         {y?(<div className="massageSuccessful"> The user has been created successfully</div>):null}
         {x?(<div className="massageError">Error happened while creating a new article, please try again</div>):null}
-
+      </div>
         </>
     )
         }  

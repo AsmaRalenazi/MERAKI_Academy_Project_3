@@ -11,9 +11,6 @@ export default function Navigation ({token}) {
      {!token? <Link to="/register"> Register </Link>:null}
      {token? <Link to="/Dashboard" >Dashboard</Link>:null}
      {token?  <Link to="/CreateNewArticle">CreateNewArticle</Link>:null}
-    
-
-      
       
     </div>
  </>
